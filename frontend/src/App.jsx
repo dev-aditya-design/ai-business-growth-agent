@@ -96,7 +96,7 @@ function App({ session, onSignOut }) {
     setFollowupLoading(true);
     try {
       const apiBase = import.meta.env.VITE_API_BASE_URL;
-      if (!apiBase || !/^https:\\/\\/[^/]+$/.test(apiBase)) throw new Error('Follow-up API is not configured.');
+      if (!apiBase || !apiBase.startsWith('https://')) throw new Error('Follow-up API is not configured.');
       const { data: { session: currentSession }, error: sessionError } = await supabase.auth.getSession();
       if (sessionError || !currentSession?.access_token) throw new Error('Session expired. Please sign in again.');
       const response = await fetch(`${apiBase}/api/ai/leads/${encodeURIComponent(lead.id)}/follow-up`, {
