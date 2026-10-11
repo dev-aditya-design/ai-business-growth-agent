@@ -45,7 +45,7 @@ function App({ session, onSignOut }) {
   function notify(message) { setToast(message); window.setTimeout(() => setToast(''), 3600); }
   async function addLead(e) {
     e.preventDefault();
-    if (!form.name.trim() || !form.company.trim() || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(form.email)) return;
+    if (!form.name.trim() || !form.company.trim() || !form.email.trim() || !form.email.includes('@') || !form.email.split('@')[1]?.includes('.')) { notify('Enter a valid name, company and email.'); return; }
     const { data, error } = await supabase.from('leads').insert({
       user_id: session.user.id, name: form.name.trim(), company: form.company.trim(), email: form.email.trim()
     }).select().single();
