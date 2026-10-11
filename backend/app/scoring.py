@@ -23,7 +23,7 @@ def settings():
     ai_key = os.getenv("GEMINI_API_KEY", "")
     if not all((url, key, ai_key)):
         raise HTTPException(503, "AI scoring is not configured")
-    if not re.fullmatch(r"https://[a-z0-9-]+\\.supabase\\.co", url):
+    if not re.fullmatch(r"https://[a-z0-9-]+\.supabase\.co", url):
         raise HTTPException(503, "Invalid database configuration")
     return url, key, ai_key
 
@@ -53,7 +53,7 @@ async def score_with_gemini(client, ai_key, lead):
         "No personal or sensitive profiling. "
         "Return a JSON object with score (integer 0-100), reason (8-600 chars), "
         "next_action (5-300 chars). Do not promise conversion. "
-        "An unknown lead should receive a conservative score.\\n"
+        "An unknown lead should receive a conservative score.\n"
         + json.dumps({"company": lead["company"], "source": lead["source"],
                       "estimated_value": str(lead["estimated_value"]),
                       "status": lead["status"]})
