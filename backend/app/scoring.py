@@ -44,7 +44,7 @@ async def authenticated_user(client, url, key, token):
 
 
 async def score_with_gemini(client, ai_key, lead):
-    model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    model = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
     if not re.fullmatch(r"gemini-[a-zA-Z0-9.-]+", model):
         raise HTTPException(503, "Invalid AI model configuration")
     prompt = (
