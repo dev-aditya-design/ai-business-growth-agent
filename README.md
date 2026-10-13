@@ -1,12 +1,12 @@
 # GrowthPilot AI — Business Growth Workspace
 
-A portfolio SaaS MVP for private lead management, AI lead qualification, human-reviewed follow-up drafts, and data-backed analytics.
+A portfolio SaaS MVP for private lead management, AI lead qualification and data-backed analytics.
 
 ## Features
 - Supabase email/password authentication and per-user leads (RLS required).
 - Create, edit, delete, search and filter leads.
 - Gemini-powered lead scoring and insights, stored on the lead.
-- AI follow-up email drafts with editable subject/message and copy action. **No messages are sent automatically.**
+- Follow-up email generation is experimental and disabled in the released UI because the external AI provider timed out. **No messages are sent automatically.**
 - Overview metrics, lead activity, status distribution, and AI scoring analytics.
 - Responsive React/Vite dashboard and FastAPI backend.
 
@@ -42,7 +42,10 @@ The `public.leads` table needs at least `id` (UUID), `user_id` (UUID), `name`, `
 Enable Row Level Security (RLS) and policies restricting SELECT/INSERT/UPDATE/DELETE to `auth.uid() = user_id`. Do not launch publicly until these policies are verified.
 
 ## Release process
-Work on `develop`. GitHub Actions must pass both frontend build and backend tests. Verify preview auth, data isolation, lead CRUD, scoring, follow-up draft and mobile layout. Only then review a PR into `main`. The permanent project URL is `https://growthpilot-ai-preview.vercel.app`; immutable deployment URLs are temporary.
+Work on `develop`. GitHub Actions must pass both frontend build and backend tests. Verify preview auth, data isolation, lead CRUD, scoring and mobile layout. Only then review a PR into `main`. The permanent project URL is `https://growthpilot-ai-preview.vercel.app`; immutable deployment URLs are temporary.
+
+## Release scope
+AI Agent is a lead-qualification entry point; scheduled automations and outbound messages are not part of the shipped UI. Gemini scoring requires a working model/API configuration and can be temporarily unavailable. The follow-up API remains experimental and is not exposed in the frontend.
 
 ## Scope limitations
 This MVP does **not** send WhatsApp messages or emails automatically, import Google Maps contacts, run scheduled campaigns, or guarantee conversion predictions. Any future outreach integration must include consent, provider policy compliance, explicit approvals, rate limits, and audit trails.
