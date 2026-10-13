@@ -1,11 +1,14 @@
 """Generate a review-only follow-up draft for a lead owned by the signed-in user."""
 import json
+import logging
 import re
 from uuid import UUID
 import httpx
 from fastapi import APIRouter, Header, HTTPException
 from pydantic import BaseModel, Field
 from .scoring import settings, authenticated_user
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/ai", tags=["AI follow-up"])
 
@@ -53,8 +56,14 @@ async def draft_followup(lead_id: UUID, authorization: str | None = Header(defau
                       "generationConfig": {"responseMimeType": "application/json", "temperature": 0.4}},
                 timeout=25,
             )
+            if ai.is_error:
+                logger.error("Follow-up Gemini request failed: model=%s status=%s", model, ai.status_code)
             ai.raise_for_status()
             raw = ai.json()["candidates"][0]["content"]["parts"][0]["text"]
             return FollowupDraft.model_validate_json(raw)
-        except (httpx.HTTPError, KeyError, IndexError, ValueError):
-            raise HTTPException(502, "Follow-up generation failed; no message was sent")
+        except httpx.HTTPStatusError as exc:
+            logger.error("Follow-up provider HTTP failure: model=%s status=%s", model, exc.response.status_code)
+            raise HTTPException(502, "Follow-up generation failed; no message was sent") from exc
+        except (httpx.HTTPError, KeyError, IndexError, ValueError) as exc:
+            logger.error("Follow-up generation failed: model=%s error_type=%s", model, type(exc).__name__)
+            raise HTTPException(502, "Follow-up generation failed; no message was sent") from exc
