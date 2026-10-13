@@ -53,8 +53,8 @@ async def draft_followup(lead_id: UUID, authorization: str | None = Header(defau
                 f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
                 headers={"x-goog-api-key": ai_key},
                 json={"contents": [{"parts": [{"text": prompt}]}],
-                      "generationConfig": {"responseMimeType": "application/json", "temperature": 0.4}},
-                timeout=25,
+                      "generationConfig": {"responseMimeType": "application/json", "temperature": 0.3, "maxOutputTokens": 400}},
+                timeout=httpx.Timeout(45.0, connect=8.0),
             )
             if ai.is_error:
                 logger.error("Follow-up Gemini request failed: model=%s status=%s", model, ai.status_code)
